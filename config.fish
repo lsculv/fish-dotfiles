@@ -23,7 +23,7 @@ if status is-interactive
         source /usr/share/fzf/shell/key-bindings.fish
         fzf_key_bindings
     end
-    alias ff "cd ~ && cd (find * -type d | fzf)"
+    alias ff 'cd ~ && cd (fd --type d --exclude go | fzf || printf "-")'
     
     # note Configurations
     export NOTE_HOME="/home/lucas/Notes"
