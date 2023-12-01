@@ -1,4 +1,5 @@
 set -U fish_greeting
+set -U EDITOR /usr/bin/nvim
 
 if status is-interactive
     # Commands to run in interactive sessions can go here
@@ -23,7 +24,27 @@ if status is-interactive
         source /usr/share/fzf/shell/key-bindings.fish
         fzf_key_bindings
     end
-    alias ff 'cd ~ && cd (fd --type d --exclude go | fzf || printf "-")'
+    # Search from the home directory, making sure we stay in the same directory
+    # we were in if we exit early
+    function ff;
+        set last "$PWD"
+        if test -n "$argv[1]"
+            set directory "$argv[1]"
+        else
+            set directory "$HOME"
+        end
+        cd (fd --type d --exclude go . "$directory" | fzf || printf "$last")
+    end
+    # Searches hidden files as well
+    function fa;
+        set last "$PWD"
+        if test -n "$argv[1]"
+            set directory "$argv[1]"
+        else
+            set directory "$HOME"
+        end
+        cd (fd --type d --exclude go . "$directory" -H | fzf || printf "$last")
+    end
     
     # note Configurations
     export NOTE_HOME="/home/lucas/Notes"
@@ -45,10 +66,19 @@ if status is-interactive
     set XDG_CONFIG_HOME $HOME/.config
     set XDG_STATE_HOME $HOME/.local/state
     set XDG_CACHE_HOME $HOME/.cache
+
+    # View markdown
+    function md
+        pandoc $argv > /tmp/$argv.html
+        xdg-open /tmp/$argv.html
+    end
 end
 
 # opam configuration
 source /home/lucas/.opam/opam-init/init.fish > /dev/null 2> /dev/null; or true
 
 # pyenv configuration
-pyenv init - | source
+if type -q pyenv
+    pyenv init - | source
+end
+
