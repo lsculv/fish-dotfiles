@@ -3,20 +3,19 @@ set -U EDITOR /usr/bin/nvim
 
 if status is-interactive
     # Commands to run in interactive sessions can go here
-    alias fishcfg 'cd ~/.config/fish/'
+    abbr -a fishcfg cd ~/.config/fish/
 
     # Common command aliases
     alias ls='ls -lGhvX --group-directories-first --color=auto'
     alias la='ls -lAGhvX --group-directories-first --color=auto'
-    alias open='xdg-open'
-    alias gs='git status'
-    alias fst='head -n 1'
-    alias lst='tail -n 1'
+    abbr -a open xdg-open
+    abbr -a gs git status
+    abbr -a fst head -n 1
+    abbr -a lst tail -n 1
 
     # Neovim Configurations
-    alias vim="nvim"
-    alias vi="nvim"
-    alias vimrc="cd ~/.config/nvim"
+    abbr -a vim nvim
+    abbr -a vimrc cd ~/.config/nvim
 
     # fzf Configurations
     #set -x FZF_DEFAULT_COMMAND "fd --type file --follow --hidden --exclude .git"
@@ -80,7 +79,8 @@ if status is-interactive
         else
             echo -e 'What manual page do you want?\nFor example, try \'man man\'.' && exit 1
         end
-        nvim -MR -c ":Man $manpage | only"
+        set manexe (which man)
+        $manexe --where "$manpage" && nvim -MR -c "Man $manpage | only"
     end
 end
 
