@@ -1,5 +1,6 @@
 set -U fish_greeting
 set -U EDITOR /usr/bin/nvim
+fish_add_path -aP /home/lucas/.juliaup/bin
 
 if status is-interactive
     # Commands to run in interactive sessions can go here
@@ -32,7 +33,7 @@ if status is-interactive
         else
             set directory "$HOME"
         end
-        cd (fd --type d --exclude go . "$directory" | fzf || printf "$last")
+        cd (fd --type d --exclude go . "$directory" | fzf --scheme path --bind tab:up,btab:down || printf "$last")
     end
     # Searches hidden files as well
     function fa;
@@ -42,7 +43,7 @@ if status is-interactive
         else
             set directory "$HOME"
         end
-        cd (fd --type d --exclude go . "$directory" -H | fzf || printf "$last")
+        cd (fd --type d --exclude go . "$directory" -H | fzf --scheme=path --bind tab:up,btab:down || printf "$last")
     end
 
     # note Configurations
@@ -75,12 +76,12 @@ if status is-interactive
     # Use neovim as the manpage viewer
     function man
         if test -n "$argv[1]"
-            set manpage "$argv[1]"
+            set manpage "$argv[1..]"
         else
             echo -e 'What manual page do you want?\nFor example, try \'man man\'.' && exit 1
         end
         set manexe (which man)
-        $manexe --where "$manpage" && nvim -MR -c "Man $manpage | only"
+        $manexe --where (string split ' ' $manpage) && nvim -MR -c "Man $manpage | only"
     end
 end
 
