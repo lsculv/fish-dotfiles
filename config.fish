@@ -1,6 +1,13 @@
 set -U fish_greeting
-set -U EDITOR /usr/bin/nvim
+set -Ux EDITOR /usr/bin/nvim
+
 fish_add_path -aP /home/lucas/.juliaup/bin
+
+# XDG environment
+set -x XDG_DATA_HOME $HOME/.local/share
+set -x XDG_CONFIG_HOME $HOME/.config
+set -x XDG_STATE_HOME $HOME/.local/state
+set -x XDG_CACHE_HOME $HOME/.cache
 
 if status is-interactive
     # Commands to run in interactive sessions can go here
@@ -13,6 +20,9 @@ if status is-interactive
     abbr -a gs git status
     abbr -a fst head -n 1
     abbr -a lst tail -n 1
+
+    # Config management
+    alias config='/usr/bin/git --git-dir=$HOME/.dotfiles --work-tree=$HOME'
 
     # Neovim Configurations
     abbr -a vim nvim
@@ -61,12 +71,6 @@ if status is-interactive
     # atuin Configurations
     atuin init fish --disable-up-arrow | source
 
-    # XDG environment
-    set XDG_DATA_HOME $HOME/.local/share
-    set XDG_CONFIG_HOME $HOME/.config
-    set XDG_STATE_HOME $HOME/.local/state
-    set XDG_CACHE_HOME $HOME/.cache
-
     # View markdown
     function md
         pandoc $argv > /tmp/$argv.html
@@ -92,4 +96,3 @@ source /home/lucas/.opam/opam-init/init.fish > /dev/null 2> /dev/null; or true
 if type -q pyenv
     pyenv init - | source
 end
-
